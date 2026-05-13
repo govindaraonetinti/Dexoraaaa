@@ -1,0 +1,168 @@
+My team finalized the platforms to use for the dex, and i am looking to check if there is any fee that is generated as platform fee connecting the api which can give me the order with out considering the sender wallet address, as i would show this to the user and he may pay from any wallet, 
+
+
+
+1. LayerZero (best, omnichain)
+2. Stargate Finance
+3. Across Protocol (fastest bridge)
+4. Hop Exchange
+5. Orbiter Finance (best UX for users)
+
+
+analyze the same and share me the api which suits the best
+
+
+
+market
+crosss
+isolated
+adjust leverage
+reduce only
+take profit
+stop loss
+liquidation price
+order value
+margin received
+slippage
+
+
+Cross (Cross Margin)
+
+Available:
+    Limit Order
+    Market
+    Adjust Leverage
+    Reduce-Only
+    Take Profit (TP)
+    Order Value
+    Slippage
+
+
+Unavailable:
+    Liquidation Price
+    Isolated (Isolated Margin)
+    Stop Loss (SL)
+    Margin Required (or Margin Received depending on your UI meaning)
+
+
+
+
+bridge:
+
+https://rubic.exchange/
+simple swap
+rocket exchange
+
+
+Trade and see:
+BNB
+eth
+Base
+Poly
+arbitrium -- 100 usdt
+
+
+Stargate.finance
+
+
+Swap:
+0x 
+li.fi
+
+
+Account Equity -Spot ,Perps
+
+Perps Overview -Balance,Unrealized PNL , Cross Margin Ratio, Maintenance Margin, Cross Account Leverage
+
+
+
+
+curl --request GET \
+  --url 'https://li.quest/v1/quote/toAmount?fromChain=42161&toChain=1&fromToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&toToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&fromAddress=0x405F34617e9867F5FA3C5467B0E07D9ee85F1678&toAddress=0x405F34617e9867F5FA3C5467B0E07D9ee85F1678&toAmount=100000'
+
+
+https://li.quest/v1/quote/toAmount?fromChain=42161&toChain=1&fromToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&toToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&fromAddress=0x405F34617e9867F5FA3C5467B0E07D9ee85F1678&toAddress=0x405F34617e9867F5FA3C5467B0E07D9ee85F1678&toAmount=100000
+https://li.quest/v1/quote/toAmount?fromChain=56&toChain=42161&fromToken=0x0000000000000000000000000000000000000000&toToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&fromAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAmount=100000
+https://li.quest/v1/quote/toAmount?fromChain=1&toChain=42161&fromToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&toToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&fromAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAmount=100000
+https://li.quest/v1/quote/toAmount
+
+
+
+?fromChain=1&toChain=42161&fromToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&toToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&fromAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAmount=100000
+
+
+https://li.quest/v1/quote/toAmount?fromChain=1&toChain=42161&fromToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&toToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&fromAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAmount=1002022&slippage=0.03
+https://li.quest/v1/quote/toAmount?fromChain=1&toChain=42161&fromToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&toToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&fromAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAmount=100000
+https://li.quest/v1/quote/toAmount?fromChain=1&toChain=42161&fromToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&toToken=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&fromAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAddress=0x405f34617e9867f5fa3c5467b0e07d9ee85f1678&toAmount=1002022&slippage=0.03&allowBridges=stargate&integrator=hyperliquid-swap
+
+
+  const getLiFiRoutes = async (fromChain: string, fromToken: string, amount: string) => {
+    const fromChainId = CHAINS[fromChain].id;
+    const toChainId = CHAINS.arbitrum.id;
+    
+    const fromTokenData = fromToken === 'native' 
+      ? TOKENS[fromChain].native 
+      : TOKENS[fromChain].usdc;
+    
+    const toTokenData = TOKENS.arbitrum.usdc;
+    
+    const amountInWei = fromToken === 'usdc' && fromChain === 'bsc'
+      ? (parseFloat(amount) * 1e18).toString() // BSC USDC has 18 decimals
+      : (parseFloat(amount) * Math.pow(10, fromTokenData.decimals)).toString();
+/*
+    const requestBody = {
+      fromChainId: fromChainId,
+      toChainId: toChainId,
+      fromTokenAddress: fromTokenData.address,
+      toTokenAddress: toTokenData.address,
+      fromAmount: amountInWei,
+      fromAddress: walletAddress,
+      toAddress: walletAddress,
+      options: {
+        slippage: 0.03,
+        allowBridges: [selectedBridge],
+        integrator: 'hyperliquid-swap'
+      }
+    };
+
+    const response = await fetch(`${LIFI_API}/advanced/routes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody)
+    });
+    */
+
+    const params = new URLSearchParams({
+      fromChain: fromChainId,
+      toChain: toChainId,
+      fromToken: fromTokenData.address,
+      toToken: toTokenData.address,
+      fromAddress: walletAddress,
+      toAddress: walletAddress,
+      toAmount: "10020220000",
+      slippage: '0.03',
+      order:'CHEAPEST',
+      // referrer: 'ABCDEX'
+    });
+console.log(`${LIFI_API}/quote/toAmount?${params}`);
+const response = await fetch(`${LIFI_API}/quote/toAmount?${params}`, {
+  method: 'GET',
+  headers: { 'Content-Type': 'application/json' }
+});
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to get routes');
+    }
+    
+    const data = await response.json();
+    console.log('LiFi Routes:', data);
+    return data.estimate;
+  };
+
+
+  
+
+
+Private key : e1c9c9d6dc3555fbf2bd873f4d67071a50ef06bdbef1d1cfed590ad162fbad03
+Address : 0xd32b25f915efb1d14a7ca203d7b6838978b3625e
